@@ -1,13 +1,32 @@
 # Automated-Parenchyma-Cell-Analysis-in-Sugarcance-Stems
   To process high-resolution SVS (Scanned Virtual Slide) files, we implemented a method for cell Segmentation and Counting. This workflow including three steps: 
-(1) Image tiling and conversion: This step involves systematically segmenting the SVS file into non-overlapping tiles of predefined dimensions (2560 × 2560 pixels) and converting the tiles into a standardized image format suitable for downstream processing；
-(2) Background filtering and vascular bundle structures identification: First, the image is divided into equally sized  blocks (320*320 pixels), and large areas of white blocks are defined as background and excluded from further analysis; Subsequently, the non-background blocks are further analyzed for the identification of vascular bundle structures based on their distinctive color characteristics after Toluidine Blue staining and inherent morphological features. In detail, the non-background image   is divided into a uniform grid of blocks(160*160 pixels), the average RGB color values for each block are calculated to construct a color feature matrix, summarizing the spatial distribution of color information across the image. After staining with Toluidine Blue, vascular bundle structures exhibit a distinct color difference from the surrounding parenchymal cells, especially as the color of the parenchymal cells clearly contrasts with the sieve tube portion of the vascular bundles. However, the color and morphological features of the xylem tissue within the vascular bundles are very similar to those of the surrounding parenchymal cells, making it challenging to distinguish them based solely on color. To address this issue, the Gaussian smoothing filter is applied to the color feature matrix to reduce noise and enhance the continuity of color transitions between adjacent blocks. By smoothing the color feature matrix, the color of the xylem tissue in the vascular bundles is corrected to match the color of other parts of the structure. Furthermore, the smoothing procedure effectively diminishes dye-induced noise in the parenchymal cell regions, facilitating a clear distinction between the vascular bundle and parenchymal cell regions, which are subsequently clustered into two groups using the K-means algorithm.
+(1) Image tiling and conversion
+(2) Background filtering and vascular bundle structures identification
 (3) Cell segmentation and counting: This step employs the Cellpose  to perform segmentation of cellular structures within an image. The cyto2 model is used with parameters a minimum cell area of “min_size = 6400" and a cell probability threshold of “cellprob_threshold = 2" to ensure accurate detection of parenchymal cells. Finally, the number of parenchymal cells is counted based on the regions identified as parenchymal cells in step (2).
+# Dependencies
+Python Modules
+  pip install opencv-python numpy scikit-image scikit-learn cellpose Pillow
 # Usage
-  # SVS File Tiling Script: Convert Whole Slide Images to JPEG Tiles
-
+  1. SVS File Tiling Script: Convert Whole Slide Images to JPEG Tiles
+     
+     Prepare the Input Directory:
+          Place all .svs files in a directory.
+  
     python3 svs2jpg.py -i <input_directory> -o <output_directory> -t <num_processes> -s 2560
+      -i / --input (Required): The directory containing the SVS files to be processed.
+      -o / --output (Required): The directory where the resulting image tiles will be saved.
+      -t / --process (Optional, default: 4): The number of processes to use for parallel processing.      
+      -s / --size (Optional, default: 2560): The size of each tile (in pixels).
+      
+  2. Parenchyma Cell Analysis in Sugarcane Stems
 
-  # Parenchyma Cell Analysis in Sugarcane Stems
-
+    python PCanalysis.py -i /path/to/image_folder -o /path/to/output.csv -b 8 -c 64
+      -i / --input (Required): The directory containing the image files to be processed.
+      -o / --output (Required): The path where the output CSV file will be saved.
+      -b / --bg_processes (Optional, default: 8): The number of processes to use for background filtering and clustering.
+      -c / --cellpose_processes (Optional, default: 64): The number of processes to use for Cellpose cell counting.      
+  3.result
+      
+      jpg.id, Parenchyma Cell count, Others count, Parenchyma Cell size, Others size
+    
     
