@@ -5,7 +5,8 @@
 (3) Cell segmentation and counting: This step employs the Cellpose  to perform segmentation of cellular structures within an image. The cyto2 model is used with parameters a minimum cell area of “min_size = 6400" and a cell probability threshold of “cellprob_threshold = 2" to ensure accurate detection of parenchymal cells. Finally, the number of parenchymal cells is counted based on the regions identified as parenchymal cells in step (2).
 # Dependencies
 Python Modules
-  pip install opencv-python numpy scikit-image scikit-learn cellpose Pillow
+
+    pip install opencv-python numpy scikit-image scikit-learn cellpose Pillow
 # Usage
   1. SVS File Tiling Script: Convert Whole Slide Images to JPEG Tiles
      
